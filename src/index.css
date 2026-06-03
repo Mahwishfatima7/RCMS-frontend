@@ -1,0 +1,116 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 216 50% 12%;
+    --foreground: 210 40% 96%;
+
+    --card: 216 45% 16%;
+    --card-foreground: 210 40% 96%;
+
+    --popover: 216 45% 16%;
+    --popover-foreground: 210 40% 96%;
+
+    --primary: 200 72% 47%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 216 30% 22%;
+    --secondary-foreground: 210 40% 96%;
+
+    --muted: 216 30% 20%;
+    --muted-foreground: 215 20% 55%;
+
+    --accent: 200 72% 47%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 216 30% 25%;
+    --input: 216 30% 25%;
+    --ring: 200 72% 47%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 216 50% 10%;
+    --sidebar-foreground: 210 40% 96%;
+    --sidebar-primary: 200 72% 47%;
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 216 30% 18%;
+    --sidebar-accent-foreground: 210 40% 96%;
+    --sidebar-border: 216 30% 20%;
+    --sidebar-ring: 200 72% 47%;
+
+    --success: 142 71% 45%;
+    --success-foreground: 210 40% 98%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 216 50% 12%;
+    --info: 200 72% 47%;
+    --info-foreground: 210 40% 98%;
+
+    --gradient-primary: linear-gradient(135deg, hsl(200 72% 47%), hsl(210 80% 55%));
+    --gradient-card: linear-gradient(135deg, hsl(216 45% 16%), hsl(216 40% 20%));
+    --gradient-sidebar: linear-gradient(180deg, hsl(216 50% 10%), hsl(216 55% 8%));
+    --shadow-glow: 0 0 20px hsl(200 72% 47% / 0.15);
+    --shadow-card: 0 4px 24px hsl(216 50% 5% / 0.4);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  /* Custom Scrollbar Styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(216 30% 22%);
+    border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, hsl(200 72% 47%), hsl(200 72% 37%));
+    border-radius: 10px;
+    border: 2px solid hsl(216 30% 22%);
+    transition: background 0.2s ease;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, hsl(200 72% 55%), hsl(200 72% 45%));
+  }
+
+  /* Firefox scrollbar */
+  * {
+    scrollbar-color: hsl(200 72% 47%) hsl(216 30% 22%);
+    scrollbar-width: thin;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-primary);
+  }
+  .card-glow {
+    box-shadow: var(--shadow-glow);
+  }
+  .glass-card {
+    @apply bg-card/80 backdrop-blur-xl border border-border/50;
+    box-shadow: var(--shadow-card);
+  }
+}
