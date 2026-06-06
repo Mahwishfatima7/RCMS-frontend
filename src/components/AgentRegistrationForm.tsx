@@ -11,7 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { BASE_URL } from "@/services/apiService";
+import { userApi } from "@/services/apiService";
 
 interface APIResponse {
   success: boolean;
@@ -99,21 +99,13 @@ export function AgentRegistrationForm({ autoOpen = false }: { autoOpen?: boolean
       const fetchManagers = async () => {
         try {
           setManagersLoading(true);
-          const token = localStorage.getItem("auth_token");
-          if (!token) return;
+          const response = await userApi.getManagersList();
 
-          const response = await fetch(`${BASE_URL}/users/managers/list`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            setManagers(data.data || []);
+          if (response.success) {
+            setManagers(response.data || []);
           }
         } catch (err) {
-                  } finally {
+        } finally {
           setManagersLoading(false);
         }
       };
@@ -213,35 +205,21 @@ export function AgentRegistrationForm({ autoOpen = false }: { autoOpen?: boolean
 
     setLoading(true);
     try {
-      const token = localStorage.getItem("auth_token");
-      if (!token) {
-        throw new Error("No authentication token found");
-      }
-
-      const response = await fetch(`${BASE_URL}/auth/agents`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          contact_no: formData.contact_no,
-          emergency_contact: formData.emergency_contact,
-          manager_name: formData.manager_name,
-          password: generatedPassword,
-        }),
+      const response = await userApi.createAgent({
+        name: formData.name,
+        email: formData.email,
+        contact_no: formData.contact_no,
+        emergency_contact: formData.emergency_contact,
+        manager_name: formData.manager_name,
+        password: generatedPassword,
       });
 
-      const data: APIResponse = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to create agent");
+      if (!response.success) {
+        throw new Error(response.error || "Failed to create agent");
       }
 
-      if (data.success && data.data?.agent) {
-        setSuccessData(data.data.agent);
+      if (response.data?.agent) {
+        setSuccessData(response.data.agent);
         setSuccessPassword(generatedPassword);
       }
     } catch (err) {

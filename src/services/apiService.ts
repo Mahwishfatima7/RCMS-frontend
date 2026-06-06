@@ -38,7 +38,7 @@ function buildQueryString(params?: Record<string, any>): string {
   return queryString ? `?${queryString}` : "";
 }
 
-async function apiCall<T>(
+export async function apiCall<T>(
   url: string,
   options: RequestInit = {},
   queryParams?: Record<string, any>,
@@ -227,6 +227,21 @@ export const userApi = {
   getManagers: () => apiCall<any>("/users/managers"),
 
   getManagersList: () => apiCall<any>("/users/managers/list"),
+
+  createAgent: (data: any) =>
+    apiCall<any>("/auth/agents", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+};
+
+// ============== AUTH ==============
+export const authApi = {
+  changePassword: (data: any) =>
+    apiCall<any>("/auth/change-password", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };
 
 // ============== ANALYTICS ==============

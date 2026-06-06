@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Users, Loader, ChevronRight, X, Search } from 'lucide-react';
 import { toast } from 'sonner';
-import { userApi } from '@/services/apiService';
+import { userApi, complaintApi } from '@/services/apiService';
 
 interface Manager {
   id: number;
@@ -94,22 +94,13 @@ export default function ManagersList() {
     if (!selectedAgent || !selectedManager) return;
 
     const fetchComplaints = async () => {
-      setLoadingComplaints(true);
       try {
-        const token = localStorage.getItem('auth_token');
-        const response = await fetch(
-          `/api/complaints/manager/${encodeURIComponent(selectedManager.name)}`,
-          {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          }
-        );
+        setLoadingComplaints(true);
+        const response = await complaintApi.getByManager(selectedManager.name);
 
-        if (!response.ok) throw new Error('Failed to fetch complaints');
+        if (!response.success) throw new Error(response.error || 'Failed to fetch complaints');
         
-        const data = await response.json();
-        let allComplaints = data.data?.complaints || [];
+        let allComplaints = response.data?.complaints || [];
         
         // Filter by selected agent
         const filtered = allComplaints.filter(

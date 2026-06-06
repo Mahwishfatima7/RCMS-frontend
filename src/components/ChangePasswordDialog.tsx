@@ -10,7 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { BASE_URL } from "@/services/apiService";
+import { authApi } from "@/services/apiService";
 
 interface ChangePasswordResponse {
   success: boolean;
@@ -107,28 +107,14 @@ export function ChangePasswordDialog() {
 
     setLoading(true);
     try {
-      const token = localStorage.getItem("auth_token");
-      if (!token) {
-        throw new Error("No authentication token found");
-      }
-
-      const response = await fetch(`${BASE_URL}/auth/change-password`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          currentPassword: formData.currentPassword,
-          newPassword: formData.newPassword,
-        }),
+      const response = await authApi.changePassword({
+        currentPassword: formData.currentPassword,
+        newPassword: formData.newPassword,
       });
 
-      const data: ChangePasswordResponse = await response.json();
-
-      if (!response.ok) {
+      if (!response.success) {
         throw new Error(
-          data.error || "Failed to change password. Please try again.",
+          response.error || "Failed to change password. Please try again.",
         );
       }
 

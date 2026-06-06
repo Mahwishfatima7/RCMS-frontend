@@ -1,4 +1,4 @@
-import { BASE_URL } from "./apiService";
+import { apiCall } from "./apiService";
 
 export interface LoginPayload {
   email: string;
@@ -45,110 +45,47 @@ class AuthService {
   private userKey = "auth_user";
 
   async register(payload: RegisterPayload): Promise<AuthResponse> {
-    try {
-      const response = await fetch(`${BASE_URL}/auth/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+    const response = await apiCall<any>("/auth/register", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
 
-      const data: AuthResponse = await response.json();
-
-      if (data.success && data.data) {
-        localStorage.setItem(this.tokenKey, data.data.token);
-        localStorage.setItem(this.userKey, JSON.stringify(data.data.user));
-      } else if (!response.ok) {
-        // Handle HTTP error responses
-        return {
-          success: false,
-          error:
-            data.error ||
-            data.message ||
-            `Registration failed (${response.status})`,
-        };
-      }
-
-      return data;
-    } catch (error) {
-      const errorMsg =
-        error instanceof Error ? error.message : "Registration failed";
-            return {
-        success: false,
-        error: errorMsg,
-      };
+    if (response.success && response.data) {
+      localStorage.setItem(this.tokenKey, response.data.token);
+      localStorage.setItem(this.userKey, JSON.stringify(response.data.user));
     }
+
+    return response;
   }
 
   async login(payload: LoginPayload): Promise<AuthResponse> {
-    try {
-      const response = await fetch(`${BASE_URL}/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+    const response = await apiCall<any>("/auth/login", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
 
-      const data: AuthResponse = await response.json();
-
-      if (data.success && data.data) {
-        localStorage.setItem(this.tokenKey, data.data.token);
-        localStorage.setItem(this.userKey, JSON.stringify(data.data.user));
-      } else if (!response.ok) {
-        // Handle HTTP error responses
-        return {
-          success: false,
-          error:
-            data.error || data.message || `Login failed (${response.status})`,
-        };
-      }
-
-      return data;
-    } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : "Login failed";
-            return {
-        success: false,
-        error: errorMsg,
-      };
+    if (response.success && response.data) {
+      localStorage.setItem(this.tokenKey, response.data.token);
+      localStorage.setItem(this.userKey, JSON.stringify(response.data.user));
     }
+
+    return response;
   }
 
   async getCurrentUser(): Promise<User | null> {
-    try {
-      const token = this.getToken();
-      if (!token) return null;
+    const response = await apiCall<any>("/auth/me", {
+      method: "GET",
+    });
 
-      const response = await fetch(`${BASE_URL}/auth/me`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      const data = await response.json();
-      return data.success ? data.data.user : null;
-    } catch (error) {
-            return null;
-    }
+    return response.success ? response.data.user : null;
   }
 
   async logout(): Promise<void> {
     try {
-      const token = this.getToken();
-      if (token) {
-        await fetch(`${BASE_URL}/auth/logout`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-      }
-    } catch (error) {
-          } finally {
+      await apiCall("/auth/logout", {
+        method: "POST",
+      });
+    } finally {
       localStorage.removeItem(this.tokenKey);
       localStorage.removeItem(this.userKey);
     }
