@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { AlertCircle, Loader, Check, Eye, EyeOff, Copy, CheckCircle2 } from "lucide-react";
 import confetti from "canvas-confetti";
@@ -11,10 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-
-const BASE_URL = import.meta.env.DEV
-  ? "/api"
-  : import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+import { BASE_URL } from "@/services/apiService";
 
 interface APIResponse {
   success: boolean;

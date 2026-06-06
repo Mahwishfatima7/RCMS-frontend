@@ -1,6 +1,4 @@
-﻿const BASE_URL = import.meta.env.DEV
-  ? "/api"
-  : import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+import { BASE_URL } from "./apiService";
 
 export interface LoginPayload {
   email: string;
