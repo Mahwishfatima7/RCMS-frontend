@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AppLayout } from '@/components/AppLayout';
 import { StatusBadge } from '@/components/StatusBadge';
 import { SLAStatusBadge } from '@/components/SLAStatusBadge';
@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Users, Loader, ChevronRight, X, Search } from 'lucide-react';
 import { toast } from 'sonner';
+import { userApi } from '@/services/apiService';
 
 interface Manager {
   id: number;
@@ -52,17 +53,11 @@ export default function ManagersList() {
     const fetchManagers = async () => {
       try {
         setLoading(true);
-        const token = localStorage.getItem('auth_token');
-        const response = await fetch('/api/users/managers', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
+        const response = await userApi.getManagers();
 
-        if (!response.ok) throw new Error('Failed to fetch managers');
+        if (!response.success) throw new Error(response.error || 'Failed to fetch managers');
         
-        const data = await response.json();
-        let managersList = data.data || [];
+        let managersList = response.data || [];
         
         // Sort managers by name (Manager One, Manager Two, etc.)
         const numberWords: { [key: string]: number } = {
